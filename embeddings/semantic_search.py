@@ -16,11 +16,16 @@ def semantic_search(sentences: List[str], query: str) -> List[tuple]:
     # vector representations of our sentences and query
     embeddings = OpenAIEmbeddings(api_key=api_key)
 
+    persist_directory = "./chroma_db"
+
     # Create a Chroma vector store from the sentences
     # Chroma is an open-source embedding database that allows for efficient
     # similarity search. Here, we're creating a Chroma instance and populating it
     # with our sentences, using the OpenAI embeddings to convert them to vectors
-    vectorstore = Chroma.from_texts(sentences, embeddings)
+    vectorstore = Chroma.from_texts(sentences, embeddings, persist_directory=persist_directory)
+
+    # Persist the data to disk
+    vectorstore.persist()
     
     # Perform similarity search with scores
     results = vectorstore.similarity_search_with_score(query, k=len(sentences))
